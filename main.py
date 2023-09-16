@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import docker
-from images.image_manager import prepare_image
+from subsystems.image_manager import prepare_image, run_image
 
 
 def main() -> None:
-    client = docker.from_env()
-    prepare_image(client=client)
+    prepare_image()
+    run_image()
 
     print("Done!")
 

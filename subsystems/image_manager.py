@@ -5,14 +5,20 @@ import docker  # https://github.com/docker/docker-py
 from pathlib import Path
 from os import path
 
-MAIN_SCRIPT: Path = Path(path.realpath(__file__))
+MAIN_SCRIPT: Path = Path(path.realpath(__name__))
 MAIN_FOLDER: str = str(MAIN_SCRIPT.parent.absolute())
 
 BASE_TAG: str = "latest"
 BUILD_IMAGE: str = "build_image"
 
 
-def prepare_image(client: docker.DockerClient) -> None:
+def run_image() -> None:
+    client = docker.from_env()
+    client.containers.run(BUILD_IMAGE, command="/bin/bash")
+
+
+def prepare_image() -> None:
+    client = docker.from_env()
     image_name: str = f"{BUILD_IMAGE}:{BASE_TAG}"
 
     for image in client.images.list():
