@@ -2,19 +2,35 @@
 # -*- coding: utf-8 -*-
 
 import docker  # https://github.com/docker/docker-py
-from pathlib import Path
-from os import path
+import os
 
-MAIN_SCRIPT: Path = Path(path.realpath(__name__))
-MAIN_FOLDER: str = str(MAIN_SCRIPT.parent.absolute())
+MAIN_FOLDER: str = os.getcwd()
 
 BASE_TAG: str = "latest"
 BUILD_IMAGE: str = "build_image"
 
 
-def run_image() -> None:
+def run_image(command: str, working_dir: str = "/build") -> None:
     client = docker.from_env()
-    client.containers.run(BUILD_IMAGE, command="/bin/bash")
+    container = None
+
+    try:
+        container = client.containers.run(
+            BUILD_IMAGE,
+            command=command,
+            volumes={MAIN_FOLDER: {"bind": "/build", "mode": "rw"}},
+            working_dir=working_dir,
+            detach=True,
+        )
+    except Exception as e:
+        print(f"Failed with exception: {e}")
+    finally:
+        if container:
+            logs = container.logs()
+            print(logs.decode("utf-8"))
+
+            container.wait()
+            container.remove()
 
 
 def prepare_image() -> None:
