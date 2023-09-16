@@ -8,8 +8,8 @@ def main() -> None:
     worker: Worker = Worker("BuildImage", "build_image")
 
     worker.run_image("mkdir build -p")
-    worker.run_image('bash -c "cmake .."', "/build/build")
-    worker.run_image('bash -c "cmake --build ."', "/build/build")
+    worker.run_image("cmake ..", "/build/build")
+    worker.run_image("cmake --build .", "/build/build")
 
     print("Done!")
 

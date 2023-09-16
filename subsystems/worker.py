@@ -27,18 +27,30 @@ class Worker:
             tag=f"{self.__name}",
         )
 
-    def run_image(self, command: str, working_dir: str = "/build") -> None:
+    def run_image(
+        self, command: str, working_dir: str = "/build", shell: bool = True
+    ) -> bool:
+        success: bool = False
         client = docker.from_env()
         container = None
 
         try:
+            command_wrapper: str
+
+            if shell:
+                command_wrapper = f'bash -c "{command}"'
+            else:
+                command_wrapper = command
+
             container = client.containers.run(
                 self.__name,
-                command=command,
+                command=command_wrapper,
                 volumes={self.__MAIN_FOLDER: {"bind": "/build", "mode": "rw"}},
                 working_dir=working_dir,
                 detach=True,
             )
+
+            success = True
         except Exception as e:
             print(f"Failed with exception: {e}")
         finally:
@@ -48,3 +60,5 @@ class Worker:
 
                 container.wait()
                 container.remove()
+
+        return success
