@@ -27,7 +27,7 @@ class Worker:
             tag=f"{self.__name}",
         )
 
-    def run_image(
+    def run(
         self, command: str, working_dir: str = "/build", shell: bool = True
     ) -> bool:
         success: bool = False
