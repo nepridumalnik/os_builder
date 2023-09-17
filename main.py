@@ -6,10 +6,18 @@ def main() -> None:
     import argparse
     import scenarios
 
-    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
+        prog=__file__, add_help=False
+    )
+
+    parser.add_argument("--help", "-h", help="Вывести справку", action="store_true")
     parser.add_argument("--build", "-b", help="Собрать ядро", action="store_true")
 
     args = parser.parse_args()
+
+    if args.help:
+        parser.print_help()
+        return
 
     if args.build:
         scenarios.build_kernel()
