@@ -10,18 +10,19 @@ class Worker:
     __IMAGE_FOLDER: str = f"{__MAIN_FOLDER}/{'images'}"
 
     __name: str
+    __client: docker.DockerClient
 
     def __init__(self, dockerfile: str, name: str) -> None:
         self.__name = name
 
-        client = docker.from_env()
+        self.__client = docker.from_env()
         image_name: str = f"{self.__name}:latest"
 
-        for image in client.images.list():
+        for image in self.__client.images.list():
             if image_name in image.attrs["RepoTags"]:
                 return
 
-        client.images.build(
+        self.__client.images.build(
             path=self.__IMAGE_FOLDER,
             dockerfile=f"{self.__IMAGE_FOLDER}/{dockerfile}",
             tag=f"{self.__name}",
@@ -31,7 +32,6 @@ class Worker:
         self, command: str, working_dir: str = "/build", shell: bool = True
     ) -> bool:
         success: bool = False
-        client = docker.from_env()
         container = None
 
         try:
@@ -42,7 +42,7 @@ class Worker:
             else:
                 command_wrapper = command
 
-            container = client.containers.run(
+            container = self.__client.containers.run(
                 self.__name,
                 command=command_wrapper,
                 volumes={self.__MAIN_FOLDER: {"bind": "/build", "mode": "rw"}},
