@@ -1,21 +1,13 @@
-set(TARGET kernel)
+set(TARGET boot)
 
 set(SOURCES
-    main.asm
+    assembler/boot.s
 )
 
-set(FORMAT bin)
-
-set(OUTPUT_KERNEL_PATH ${CMAKE_BINARY_DIR}/${TARGET}.${FORMAT})
-
-add_custom_command(
-    OUTPUT ${OUTPUT_KERNEL_PATH}
-    COMMAND nasm ${SOURCES} -o ${OUTPUT_KERNEL_PATH} -f bin
-    COMMAND truncate -s 1440k ${OUTPUT_KERNEL_PATH}
-    DEPENDS ${SOURCES}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Assembling ${SOURCES} to ${TARGET}"
+set(CMAKE_EXE_LINKER_FLAGS
+    "-m elf_i386 -T ${CMAKE_CURRENT_SOURCE_DIR}/assembler/linker.ld"
 )
 
-add_custom_target(${TARGET} ALL DEPENDS ${OUTPUT_KERNEL_PATH})
-set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${OUTPUT_KERNEL_PATH})
+set_property(SOURCE ${SOURCES} APPEND PROPERTY COMPILE_OPTIONS "-32")
+
+add_executable(${TARGET} ${SOURCES})

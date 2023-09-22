@@ -48,6 +48,7 @@ class Worker:
                 volumes={self.__MAIN_FOLDER: {"bind": "/build", "mode": "rw"}},
                 working_dir=working_dir,
                 detach=True,
+                stdout=True,
             )
 
             success = True
