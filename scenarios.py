@@ -5,8 +5,8 @@
 def build_kernel() -> None:
     from subsystems.worker import Worker
 
-    worker: Worker = Worker("BuildImage", "build_image")
+    worker: Worker = Worker('BuildImage', 'build_image')
 
-    worker.run("mkdir build -p")
-    worker.run("cmake ..", "/build/build")
-    worker.run("cmake --build .", "/build/build")
+    worker.run('mkdir build -p')
+    worker.run('cmake .. -G Ninja', '/build/build')
+    worker.run('cmake --build .', '/build/build')

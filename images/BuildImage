@@ -1,4 +1,4 @@
 FROM debian
 
 RUN apt update && apt upgrade
-RUN apt install -y cmake build-essential gcc g++
+RUN apt install -y cmake build-essential gcc g++ ninja-build
