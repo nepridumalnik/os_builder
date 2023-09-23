@@ -51,18 +51,19 @@ class Worker:
         for line in logs:
             print(line.strip().decode('utf-8'))
 
-        stats = container.stats()
-        print(stats)
-
         result = container.wait()
         container.remove()
 
         status_code: int = int(result['StatusCode'])
 
         if not noexcept and status_code:
+            error_text: str
+
             if task_name:
-                raise Exception(f'task {task_name} finished with error: {status_code}')
+                error_text = f'task {task_name} finished with error: {status_code}'
             else:
-                raise Exception(f'task finished with error: {status_code}')
+                error_text = f'task finished with error: {status_code}'
+
+            raise Exception(error_text)
 
         return status_code
