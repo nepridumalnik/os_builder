@@ -4,7 +4,7 @@
 
 def main() -> None:
     import argparse
-    import scenarios
+    import build_api.scenarios as scenarios
 
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
         prog=__file__, add_help=False
